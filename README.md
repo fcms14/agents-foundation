@@ -13,6 +13,47 @@ It ships two plugins — install one or both:
 
 Gates run in **two layers**: agent-time `PreToolUse` hooks ship in the plugin (resolved via `${CLAUDE_PLUGIN_ROOT}`); the commit-time git gate is wired by `/delivery-team:init`, which copies the validators into the consumer repo because git hooks can't see `${CLAUDE_PLUGIN_ROOT}`.
 
+## Roles & org chart
+
+The team splits into a **process layer** (`delivery-team`, agnostic) and a **stack layer** (`stack-turbo-nest-react`, opinionated). The Delivery Manager orchestrates: the planner specifies, implementers build, docs and QA run alongside when warranted, and the reviewer is the gate.
+
+```mermaid
+flowchart TD
+  DM["Delivery Manager<br/>(orchestrator)"]
+  PL["Planner<br/>PO + Tech Lead"]
+  RV["Reviewer<br/>Quality Gate"]
+  subgraph ENG["Engineering — stack layer"]
+    BE["Backend"]
+    FE["Frontend"]
+    IN["Platform / DevOps"]
+  end
+  DOC["Technical Writer"]
+  QA["QA<br/>(specialist)"]
+  DM --> PL
+  DM --> ENG
+  DM --> DOC
+  DM --> QA
+  DM --> RV
+  PL -. specifies tasks .-> ENG
+  ENG -. implements + unit/e2e .-> RV
+  QA -. load / journeys / resilience .-> RV
+  DOC -. living docs .-> RV
+  RV -. "approve / changes-requested" .-> DM
+```
+
+| Agent | Persona | Layer | Role |
+| --- | --- | --- | --- |
+| [planner](plugins/delivery-team/agents/planner.md) | Product Owner + Tech Lead | delivery-team | turns a goal into a well-formed task (Spec + Plan + Todo + Verdict + Log) |
+| [reviewer](plugins/delivery-team/agents/reviewer.md) | Quality Gate | delivery-team | judges the diff vs the contract; its verdict drives `apply-verdict` + the gate |
+| [docs](plugins/delivery-team/agents/docs.md) | Technical Writer | delivery-team | living C4 docs and ERDs |
+| [qa](plugins/delivery-team/agents/qa.md) | QA Engineer (specialist) | delivery-team | load / journeys / resilience / coverage — not the per-feature path |
+| [product-delivery-manager](plugins/delivery-team/agents/product-delivery-manager.md) | Delivery Manager | delivery-team | reads the board, dispatches, integrates, ships |
+| [backend](plugins/stack-turbo-nest-react/agents/backend.md) | Software Engineer | stack-turbo-nest-react | server-side feature work + its own tests |
+| [frontend](plugins/stack-turbo-nest-react/agents/frontend.md) | Software Engineer | stack-turbo-nest-react | UI/app feature work + its own tests |
+| [infra](plugins/stack-turbo-nest-react/agents/infra.md) | Platform / DevOps | stack-turbo-nest-react | platform / CI / deploy tasks |
+
+> Backlog replenishment (`/delivery-team:task-promote`) and verdict application (`/delivery-team:apply-verdict`) are **deterministic skills**, not agents — bookkeeping is code, not an agent's discretion.
+
 ## Structure
 
 ```
