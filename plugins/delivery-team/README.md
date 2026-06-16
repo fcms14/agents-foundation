@@ -38,11 +38,10 @@ That's why the **reviewer** spans three forms: an *agent* judges, a *skill* (`ap
 
 `rules/` and `scripts/` are not native plugin component types — they ride along as files. The agents reference `.claude/rules/*` and the commit-gate runs `.claude/scripts/*`; **`/delivery-team:init` materializes both into the consumer repo** (see `commands/init.md` for the exact mechanism and the update trade-off).
 
-## v0 caveat — not yet fully stack-agnostic
+## v0 caveat — one residual stack coupling
 
-This layer is *intended* to be process-only, but the v0 still carries residual stack assumptions (tracked for removal):
+The **reviewer** is now **rule-driven**: it checks against whatever `.claude/rules/*` are present, so stack opinions (throttler, cursor pagination, tokens/i18n, …) live in the stack plugin's rules — not hard-coded here. Installing this layer alone produces no stack-specific noise.
 
-- The **reviewer** agent checks for stack-specific concerns (throttler, honeypot, cursor pagination, `packages/shared`, design tokens/i18n). Installed without a stack plugin, those checks won't apply.
-- The **docs gate** (`scripts/validate-docs.mjs`) hard-codes a `services/<svc>/.../migrations/*.sql` + service-README layout, i.e. a NestJS/Turborepo-style monorepo. On a different repo shape it simply never triggers (fail-open), so it's harmless but inert.
+One coupling remains (tracked for removal):
 
-Both are deliberate deferrals: the opinionated specifics will be trimmed out of this layer once the `stack-*` plugins own them. Until then, pair this with `stack-turbo-nest-react` for the full experience.
+- The **docs gate** (`scripts/validate-docs.mjs`) hard-codes a `services/<svc>/.../migrations/*.sql` + service-README layout, i.e. a NestJS/Turborepo-style monorepo. On a different repo shape it simply never triggers (fail-open), so it's harmless but inert — it will move into the `stack-*` layer.

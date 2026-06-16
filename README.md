@@ -98,7 +98,7 @@ A marketplace is just a git repo — no registry.
 
 ## Roadmap / known caveats
 
-- **Not yet fully stack-agnostic** — the `delivery-team` reviewer and `validate-docs.mjs` still carry NestJS/Turborepo assumptions (throttler/cursor-pagination checks; a `services/<svc>/.../migrations` docs gate). Trim these into the stack layer. (Detailed in the delivery-team README.)
+- **One residual stack coupling** — the reviewer is now rule-driven (stack opinions live in the stack plugin's rules), but `validate-docs.mjs` still assumes a `services/<svc>/.../migrations` monorepo layout (fail-open elsewhere). Move it into the stack layer. (Detailed in the delivery-team README.)
 - **Opinionated stack is v0 as-built** — codify the de-facto design pattern (folder shape, naming, import boundaries) into explicit conventions, and add a structure-lint (ESLint boundaries / dependency-cruiser) so organization is a deterministic gate, not a reviewer judgment call.
 - **Hard plugin dependency** — `stack-turbo-nest-react` depends on `delivery-team` only in prose; confirm whether a real dependency field can enforce it.
 - **`/delivery-team:init` portability** — the commit-gate wiring assumes pnpm/husky (with a plain `.git/hooks/pre-commit` fallback); the `.mjs` validators require Node. Harden and document the prerequisites.

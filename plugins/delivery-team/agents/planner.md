@@ -13,7 +13,7 @@ Process:
 3. **Copy `work/TASK-TEMPLATE.md`** to `work/ready/TASK-NNN-slug.md` (next free number) and fill every section. The template's headings and the Verdict tokens are **standardized** — automation parses them, so never rename a heading or invent a verdict word. The required shape:
    - **Frontmatter**: `id`, `title`, `agent` (frontend/backend/infra/qa/docs), `depends_on`, `parallelizable`, `worktree`.
    - **Spec** → open with a short **Goal** summary (1–2 lines: what it delivers and why) and, when the task has `depends_on`, a **Context from upstream tasks** note (both optional but desired — a quick orientation before the checklist). Then the binding part: **Acceptance Criteria as a checklist** (`- [ ]`, each criterion independently verifiable against code/tests) and an **Out of scope** list. This is the contract — complete and unambiguous. The reviewer ticks the criteria; you leave them unticked.
-   - **Plan**: concrete technical steps, files/modules touched, design decisions, which rules apply.
+   - **Plan**: **lead with the design (abstraction-first — see `principles.md`)** — name the domain entities and their relationships and the module/component boundaries the task touches (what depends on what, the import/dependency direction), *before* the step-by-step. Then the concrete technical steps, files/modules touched, and which rules apply. Modeling the shape first stops the implementer from sprinting on details while the structure drifts.
    - **Todo**: a checklist the executing agent follows (distinct from Acceptance Criteria — the implementer owns these).
    - **Verdict**: leave empty — `/delivery-team:apply-verdict` fills it from the reviewer's decision (`approve` | `changes-requested`).
    - **Log**: empty (the executor fills it).

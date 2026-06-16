@@ -30,7 +30,7 @@ parallelizable: true      # may run alongside other tasks?
 worktree: true            # needs an isolated git worktree? (code tasks: yes)
 ---
 ```
-Sections (standardized — automation parses them; copy `work/TASK-TEMPLATE.md`): **Spec** (immutable once approved — an optional **Goal**/**Context from upstream tasks** summary, then the binding **Acceptance Criteria as a `- [ ]` checklist** and out of scope) · **Plan** (mutable — technical steps, files touched, design decisions) · **Todo** (implementer checklist) · **Verdict** (`approve` | `changes-requested`, written by `/delivery-team:apply-verdict` — not by hand) · **Log** (agents append decisions/results).
+Sections (standardized — automation parses them; copy `work/TASK-TEMPLATE.md`): **Spec** (immutable once approved — an optional **Goal**/**Context from upstream tasks** summary, then the binding **Acceptance Criteria as a `- [ ]` checklist** and out of scope) · **Plan** (mutable — **design-first**: domain model & module boundaries, then technical steps, files touched, design decisions) · **Todo** (implementer checklist) · **Verdict** (`approve` | `changes-requested`, written by `/delivery-team:apply-verdict` — not by hand) · **Log** (agents append decisions/results).
 
 ## Orchestrator + workers
 

@@ -8,6 +8,7 @@ These are non-negotiable defaults. When a rule here conflicts with a quick hack,
 - **KISS** — the simplest design that satisfies the spec. Prefer boring, readable code over clever code.
 - **YAGNI** — build only what the current task requires. No speculative abstractions, no "we might need it later" parameters.
 - **Fail-prepared** — assume every external dependency (LLM, broker, DB, third-party API) will fail. Degrade gracefully; never let a non-critical dependency block the core flow. See `resilience` guidance in `backend.md`.
+- **Abstraction-first** — model the domain (entities and their relationships) and the module/component boundaries *before* writing code; let the structure drive the implementation, not the reverse. Code that grows without a modeled shape sprawls — name the pieces and their dependency direction first. (The planner makes this the lead of every task Plan; a stack's `architecture.md` defines the concrete boundaries.)
 
 ## Single responsibility for cross-cutting concerns
 
