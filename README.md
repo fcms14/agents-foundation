@@ -2,6 +2,8 @@
 
 A reusable delivery foundation for Claude Code, packaged as a plugin marketplace. Install it into any project to get a team of role agents, a `work/` markdown kanban, and deterministic gates that keep the board honest.
 
+> 📄 **Design article:** [*Agents create and judge. Code enforces.*](https://fcms14.github.io/agents-foundation/) — the rationale, architecture, and how it compares to prompt-canvas methods like SPDD. (GitHub Pages, served from `/docs`.)
+
 It ships two plugins — install one or both:
 
 - **`delivery-team`** — the agnostic process: role agents (planner, reviewer, docs, qa, product-delivery-manager), the `work/` kanban, the deterministic board/docs/verdict gates, and the `/delivery-team:init` scaffolder. Carries *how work flows*, not *which stack you use*.
