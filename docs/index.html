@@ -7,13 +7,17 @@
 <meta name="description" content="A reusable, enforcement-first delivery operating system for AI coding agents, packaged as a Claude Code plugin marketplace. The design, the rationale, and how it compares to prompt-canvas methods like SPDD." />
 <meta name="color-scheme" content="light dark" />
 <script>
-  /* set theme before paint to avoid a flash */
+  /* set theme + language before paint to avoid a flash */
   (function(){
+    var d = document.documentElement;
     try{
       var t = localStorage.getItem('theme') ||
         (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-theme', t);
-    }catch(e){ document.documentElement.setAttribute('data-theme','light'); }
+      d.setAttribute('data-theme', t);
+      var l = localStorage.getItem('lang') ||
+        ((navigator.language || 'en').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en');
+      d.setAttribute('data-lang', l); d.lang = l;
+    }catch(e){ d.setAttribute('data-theme','light'); d.setAttribute('data-lang','en'); }
   })();
 </script>
 <style>
@@ -37,13 +41,18 @@
     text-rendering:optimizeLegibility;
     transition:background .25s ease,color .25s ease;
   }
-  /* theme toggle */
-  .theme-toggle{position:fixed;top:1rem;right:1rem;z-index:20;width:2.5rem;height:2.5rem;
-    border-radius:50%;border:1px solid var(--rule);background:var(--panel);color:var(--ink);
-    cursor:pointer;font-size:1.05rem;line-height:1;display:flex;align-items:center;justify-content:center;
-    box-shadow:0 1px 4px rgba(0,0,0,.1);transition:background .25s,color .2s,border-color .2s,transform .15s}
-  .theme-toggle:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
-  .theme-toggle:active{transform:translateY(0)}
+  /* controls (theme + language) */
+  .ctrls{position:fixed;top:1rem;right:1rem;z-index:20;display:flex;gap:.5rem}
+  .ctrl{height:2.5rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.1);
+    transition:background .25s,color .2s,border-color .2s,transform .15s}
+  .ctrl:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+  .ctrl:active{transform:translateY(0)}
+  #themeToggle{width:2.5rem;border-radius:50%;font-size:1.05rem;line-height:1}
+  #langToggle{padding:0 .85rem;border-radius:1.25rem;font:700 .78rem/1 ui-sans-serif,system-ui,sans-serif;letter-spacing:.04em}
+  /* language switching: only the active language is shown */
+  html[data-lang="en"] [data-l="pt"]{display:none}
+  html[data-lang="pt"] [data-l="en"]{display:none}
   /* mobile-first: one centered content column. The TOC appears in the left gutter
      only once the viewport is wide enough to hold it WITHOUT shifting the content
      off-centre (content stays in the middle column at every width). */
@@ -102,6 +111,7 @@
   tbody tr:nth-child(odd){background:var(--panel)}
   td:first-child{font-weight:600;color:var(--ink)}
   .vs th:nth-child(2){color:var(--accent)}
+  .faint{color:var(--faint)}
   /* mermaid */
   .diagram{margin:1.6rem 0;padding:1rem;background:var(--panel);border:1px solid var(--rule);border-radius:4px;text-align:center}
   .mermaid{font-family:ui-sans-serif,system-ui,sans-serif!important}
@@ -118,8 +128,13 @@
 </style>
 </head>
 <body>
-<button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark and light theme" title="Toggle theme">☾</button>
-<div class="wrap">
+<div class="ctrls">
+  <button id="langToggle" class="ctrl" type="button" aria-label="Switch language">PT</button>
+  <button id="themeToggle" class="ctrl" type="button" aria-label="Toggle dark and light theme" title="Toggle theme">☾</button>
+</div>
+
+<!-- ============================ ENGLISH ============================ -->
+<div class="wrap" data-l="en">
   <nav class="toc" aria-label="Contents">
     <div class="lbl">Contents</div>
     <ol>
@@ -284,33 +299,218 @@ flowchart TD
   </article>
 </div>
 
+<!-- ============================ PORTUGUÊS ============================ -->
+<div class="wrap" data-l="pt">
+  <nav class="toc" aria-label="Conteúdo">
+    <div class="lbl">Conteúdo</div>
+    <ol>
+      <li><a href="#problema">O problema</a></li>
+      <li><a href="#tese">Julgamento vs. burocracia</a></li>
+      <li><a href="#anatomia">Anatomia da fundação</a></li>
+      <li><a href="#camadas">Duas camadas</a></li>
+      <li><a href="#time">O time de papéis</a></li>
+      <li><a href="#kanban-pt">O kanban de trabalho</a></li>
+      <li><a href="#portoes">Os portões</a></li>
+      <li><a href="#regras">Agentes guiados por regras</a></li>
+      <li><a href="#abstracao">Abstração primeiro</a></li>
+      <li><a href="#relacionado">Trabalho relacionado: SPDD</a></li>
+      <li><a href="#principios">Princípios de design</a></li>
+      <li><a href="#usar">Como usar</a></li>
+      <li><a href="#referencias">Referências</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <header class="masthead">
+      <div class="kicker">Pesquisa &amp; Desenvolvimento · plugins do Claude Code</div>
+      <h1>Agentes criam e julgam. O código garante.</h1>
+      <p class="dek">Um sistema operacional de entrega reutilizável, com garantias por construção, para times de agentes de IA.</p>
+      <p class="byline">Felipe Cardoso · 2026 · <a href="https://github.com/fcms14/agents-foundation">github.com/fcms14/agents-foundation</a></p>
+      <div class="abstract">
+        <p class="lbl">Resumo</p>
+        <p>Desenvolvedores individuais ficaram mais rápidos com assistentes de IA; os times ganharam um novo problema de governança. Intenção ambígua vira código em segundos, revisões afogam no volume, e "pronto" passa a ser uma alegação, não um fato. O <strong>agents-foundation</strong> é uma tentativa de responder a isso no nível do processo: um time de agentes por papel que <em>criam e julgam</em>, um kanban em markdown versionado no Git contra o qual eles executam, e um sistema de duas camadas de <em>portões determinísticos</em> que tornam as transições de estado e os invariantes de qualidade impossíveis de burlar. A regra central de design — <em>agentes julgam; o código faz a burocracia e a impõe</em> — é o que separa este projeto de métodos centrados em prompt que ainda confiam num humano (ou num LLM) para lembrar das regras. Ele é distribuído como um marketplace de plugins do Claude Code, dividido numa camada de <em>processo</em> agnóstica e camadas de <em>stack</em> plugáveis.</p>
+      </div>
+    </header>
+
+    <p class="lede">Um agente de IA corrige a própria prova com prazer. Ele marca um checkbox que não cumpriu, move para <code>done</code> uma tarefa que não terminou, e relata uma suíte verde que só testa um mock. Nada disso é má-fé — é o comportamento previsível de um sistema otimizado para produzir continuações plausíveis. A pergunta que este projeto faz é estreita e prática: <strong>no que um LLM deve ser confiado, e o que deve sair por completo das mãos dele?</strong></p>
+
+    <h2 id="problema">O problema: velocidade sem governança</h2>
+    <p>A primeira onda de ferramentas de IA para código otimizou o ciclo interno — um dev, um prompt, mais código por hora. Na escala de time aparece um atrito diferente. Requisitos viram implementação antes de alguém concordar com o escopo. Pull requests chegam mais rápido do que se consegue revisar. O código gerado é localmente plausível mas globalmente desalinhado da intenção. E o registro do <em>porquê</em> de um sistema ser do jeito que é evapora no instante em que a janela de chat fecha.</p>
+    <p>O remédio ingênuo — "faça o agente seguir um checklist" — falha pela mesma razão que o problema existe: o agente é justamente o que você não pode confiar plenamente para seguir o checklist. Um método que depende de o modelo nunca esquecer uma restrição apenas mudou a falha de lugar, não a removeu.</p>
+
+    <h2 id="tese">A tese: julgamento vs. burocracia</h2>
+    <p>A fundação é construída sobre uma distinção, aplicada em todo lugar:</p>
+    <blockquote>Agentes criam e julgam. Passos determinísticos aplicam o estado, e hooks o impõem.</blockquote>
+    <p>Criar um plano, implementar uma feature, julgar se o código atende à spec — isso exige contexto, bom senso e raciocínio. Pertence aos agentes. <em>Marcar os checkboxes de critérios de aceite, carimbar o veredito, mover a tarefa entre estados, recusar um commit que viola um invariante</em> — isso é mecânico. Nunca pode depender da discrição de um LLM, porque discrição é exatamente o que falha em silêncio.</p>
+    <p>Então o agente revisor devolve um veredito estruturado; um script determinístico o aplica (marca os critérios, carimba a seção, move o arquivo); e um hook recusa deixar qualquer tarefa chegar a <code>done</code> sem uma aprovação registrada e todos os critérios marcados. O julgamento é do agente. A burocracia é código. A imposição não é opcional.</p>
+
+    <h2 id="anatomia">Anatomia da fundação</h2>
+    <p>Concretamente, instalar a fundação num repositório dá a ele cinco coisas: um time de agentes, um quadro (board), um contrato de tarefa, um conjunto de regras, e os portões que os amarram. O resto deste artigo percorre cada um e o raciocínio por trás.</p>
+
+    <h2 id="camadas">Duas camadas: processo e stack</h2>
+    <p>O sistema é dividido em dois plugins. O <strong>delivery-team</strong> carrega <em>como o trabalho flui</em> — os agentes por papel, o kanban, os portões, os princípios de engenharia — e não sabe nada sobre nenhum framework em particular. O <strong>stack-turbo-nest-react</strong> carrega <em>qual tecnologia</em> — os agentes implementadores e as convenções opinadas de uma stack concreta (NestJS + React/Turborepo). Um projeto instala só a camada de processo, ou a combina com uma stack.</p>
+    <div class="tablewrap">
+    <table>
+      <thead><tr><th>Camada</th><th>Plugin</th><th>O que possui</th></tr></thead>
+      <tbody>
+        <tr><td>Processo <span class="faint">(agnóstico)</span></td><td><code>delivery-team</code></td><td>fluxo do kanban, agentes por papel, disciplina de revisão, os portões determinísticos, princípios de engenharia, filosofia de ADR + docs + testes</td></tr>
+        <tr><td>Stack <span class="faint">(opinada)</span></td><td><code>stack-turbo-nest-react</code></td><td>agentes implementadores (backend/frontend/infra) e suas regras; portões específicos da stack; o modelo de documentação C4</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>A divisão não é cosmética. É o que permite reutilizar o processo: uma futura <code>stack-go-chi</code> se encaixaria no mesmo revisor, board e bootstrapper sem tocar uma linha da camada de processo — porque os componentes ativos da camada de processo não contêm nenhuma especificidade de framework.</p>
+
+    <h2 id="time">O time de papéis</h2>
+    <p>O orquestrador (a persona Gerente de Entrega) lê o board, monta o grafo de dependências e despacha os agentes por papel — implementadores em paralelo, em worktrees Git isoladas quando o trabalho é disjunto, serializados quando não é. Os workers rodam num modelo rápido; o revisor — o julgamento que mais importa — roda no mais forte.</p>
+    <figure class="diagram">
+      <pre class="mermaid">
+flowchart TD
+  DM["Gerente de Entrega<br/>(orquestrador)"]
+  PL["Planner<br/>PO + Tech Lead"]
+  RV["Revisor<br/>Portão de Qualidade"]
+  subgraph ENG["Engenharia — camada de stack"]
+    BE["Backend"]
+    FE["Frontend"]
+    IN["Plataforma / DevOps"]
+  end
+  DOC["Redator Técnico"]
+  QA["QA<br/>(especialista)"]
+  DM --> PL
+  DM --> ENG
+  DM --> DOC
+  DM --> QA
+  DM --> RV
+  PL -. especifica tarefas .-> ENG
+  ENG -. implementa + testes .-> RV
+  QA -. carga / jornadas / resiliência .-> RV
+  DOC -. docs vivos .-> RV
+  RV -. "aprovar / pedir mudanças" .-> DM
+      </pre>
+      <figcaption>O time de papéis. Setas sólidas: despacho. Setas pontilhadas: entregas convergindo para o portão de revisão.</figcaption>
+    </figure>
+    <p>Dois papéis deliberadamente <em>não</em> são agentes. A reposição do backlog e a aplicação do veredito são <strong>skills determinísticas</strong> — procedimentos executados em contexto, não tarefas de raciocínio — justamente por serem burocracia.</p>
+
+    <h2 id="kanban-pt">O kanban de trabalho: estado é um lugar</h2>
+    <p>O trabalho vive como um kanban em markdown em <code>work/</code>, e o estado de uma tarefa <em>é a pasta em que ela está</em>: <code>backlog → ready → active → review → done</code>. Uma transição é um <code>git&nbsp;mv</code>; o histórico de commits é a trilha de auditoria. Deliberadamente não há um campo <code>status:</code> na tarefa — um campo fica obsoleto no instante em que alguém esquece de atualizá-lo, mas o local de um arquivo não tem como mentir sobre onde ele está.</p>
+    <p>Cada tarefa é um único arquivo com forma padronizada — Spec (um contrato imutável, com critérios de aceite como checklist), Plan, Todo, Verdict e Log. Os títulos e o vocabulário do veredito são padronizados porque <em>a automação faz parsing deles</em>. O revisor julga os critérios; ele nunca edita o arquivo.</p>
+
+    <h2 id="portoes">Os portões: duas camadas de imposição</h2>
+    <p>O mesmo invariante — <em>nenhuma tarefa chega a <code>done</code> sem um veredito registrado e todos os critérios de aceite marcados</em> — é imposto duas vezes, por design:</p>
+    <ul>
+      <li><strong>Em tempo de agente</strong> — um hook <code>PreToolUse</code> dispara no momento em que um agente tenta mover uma tarefa para <code>done/</code>, bloqueando cedo com o motivo.</li>
+      <li><strong>Em tempo de commit</strong> — um hook de pre-commit do Git roda o mesmo validador sobre a mudança em stage, então o portão vale mesmo fora do contexto do agente. (Como os hooks do Git rodam fora da ferramenta, o bootstrapper copia os validadores para dentro do repositório — uma duplicação pequena e deliberada: tudo que é executado por algo <em>fora</em> do agente precisa morar onde esse algo enxergue.)</li>
+    </ul>
+    <p>Um segundo portão exige que uma migration de schema venha acompanhada da documentação do seu modelo de dados, para o diagrama do banco não derivar em silêncio atrás do schema. Esse portão é específico da stack e, por isso, vive na camada de stack — não na agnóstica.</p>
+
+    <h2 id="regras">Agentes guiados por regras, não agentes que contêm regras</h2>
+    <p>Uma versão inicial do revisor tinha as preocupações de uma stack hard-coded — rate limiting, estilo de paginação, design tokens. Isso era um vazamento: a camada de processo "agnóstica" secretamente conhecia NestJS e React. A correção generaliza um princípio que vale enunciar sozinho:</p>
+    <blockquote>Uma convenção forte pertence a uma <em>regra</em>, aplicada a toda tarefa — nunca reescrita por tarefa, onde pode ser esquecida.</blockquote>
+    <p>O revisor virou um <em>intérprete</em> de regras em vez de um <em>contêiner</em> de regras: ele carrega quaisquer regras presentes e trata cada uma como parte do contrato. Instale uma stack, e suas regras entram no checklist automaticamente. Instale só a camada de processo, e não há ruído de stack. O mesmo padrão foi aplicado ao agente de documentação e ao comando de atualização de docs. As opiniões vivem em exatamente um lugar — as regras — então um agente e uma regra nunca podem discordar.</p>
+
+    <h2 id="abstracao">Planejamento com abstração primeiro</h2>
+    <p>Uma ideia foi adotada da pesquisa analisada abaixo: modelar o domínio e as fronteiras de módulo <em>antes</em> de escrever código, "senão a IA dispara nos detalhes de implementação enquanto a estrutura desmorona". Mas foi adotada do jeito da fundação — não como uma seção que o autor preenche por feature (e esquece), e sim como um <strong>princípio que o planner aplica a toda tarefa</strong> e o revisor verifica. Todo Plan abre nomeando as entidades, suas relações e a direção de dependência entre módulos, antes de qualquer passo a passo. Estrutura que derivou da forma modelada é um achado de revisão mesmo quando o comportamento funciona.</p>
+
+    <h2 id="relacionado">Trabalho relacionado: métodos de prompt-canvas (SPDD)</h2>
+    <p>O <a href="https://martinfowler.com/articles/structured-prompt-driven/">Structured Prompt-Driven Development</a> (SPDD) compartilha a convicção central deste projeto: tornar a intenção explícita e versionada antes do código, e manter humanos no controle pelo julgamento, não pela digitação. O instrumento do SPDD é o <em>REASONS Canvas</em>, um prompt estruturado em sete partes tratado como artefato de primeira classe, versionado, mantido em sincronia bidirecional com o código. É uma ideia genuinamente boa, e a disciplina de abstração-primeiro acima é emprestada dele.</p>
+    <p>Onde esta fundação diverge é o eixo que ela otimiza. Um canvas otimiza o <em>eixo do tempo</em> — a spec de uma feature vive, sincroniza e se acumula na próxima. Esta fundação otimiza o <em>eixo do controle</em> — o estado de muitas tarefas concorrentes é mecanicamente correto e impossível de pular.</p>
+    <div class="tablewrap">
+    <table class="vs">
+      <thead><tr><th>Dimensão</th><th>agents-foundation</th><th>Prompt-canvas (ex.: SPDD)</th></tr></thead>
+      <tbody>
+        <tr><td>Imposição</td><td>Determinística e impossível de burlar — hooks + scripts recusam um <code>done</code> inválido</td><td>Disciplina de processo + revisão manual</td></tr>
+        <tr><td>Rastreio de estado</td><td>Kanban nativo do Git, grafo de dependências, reposição automática</td><td>Rastreado implicitamente pelos commits</td></tr>
+        <tr><td>Time / escala</td><td>Orquestração multiagente, worktrees paralelas, escolha de modelo por tarefa</td><td>Um dev + IA, sequencial</td></tr>
+        <tr><td>Padrões</td><td>Regras fortes aplicadas a toda tarefa — impossíveis de esquecer</td><td>Declarados por feature — dependem de o autor lembrar</td></tr>
+        <tr><td>Reúso</td><td>Marketplace instalável: processo agnóstico + stacks plugáveis</td><td>Uma metodologia + sua CLI</td></tr>
+        <tr><td>Julgamento vs. burocracia</td><td>Separados por construção</td><td>Em grande parte manual</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>A diferença mais nítida é a linha <em>padrões</em>. Um canvas confia que o autor reescreva as restrições de segurança, performance e estrutura em toda feature; as pessoas esquecem, e a brecha sobe em silêncio. Esta fundação mantém isso como regras fortes impostas a todas as tarefas, então uma restrição não pode ser omitida de uma tarefa por acidente.</p>
+    <blockquote class="tldr">Se você quer um <em>método que um dev disciplinado segue</em>, um prompt canvas é excelente. Se você quer um <em>sistema que não deixa o processo ser pulado</em>, e que escala para um time de agentes, esta é a aposta.</blockquote>
+
+    <h2 id="principios">Princípios de design, destilados</h2>
+    <ul>
+      <li><strong>Tire a burocracia do LLM.</strong> Se um passo é mecânico, um script o faz e um hook o impõe.</li>
+      <li><strong>Torne o estado impossível de mentir.</strong> Codifique-o onde não pode ser esquecido — uma pasta, um commit — não num campo que alguém atualiza à mão.</li>
+      <li><strong>Convenções são regras, não lembretes.</strong> Imponha a todos; nunca dependa de memória por tarefa.</li>
+      <li><strong>Componentes leem opiniões; regras as guardam.</strong> Uma fonte da verdade, então um agente e uma regra nunca divergem.</li>
+      <li><strong>Modele a forma antes do detalhe.</strong> Abstração-primeiro, em toda tarefa.</li>
+      <li><strong>Escolha a forma pelo trabalho.</strong> Agente para julgamento, skill para procedimento, regra para restrição, hook para o inegociável.</li>
+    </ul>
+
+    <h2 id="usar">Como usar</h2>
+    <p>Um marketplace é só um repositório Git — sem registro central. Adicione, instale um ou ambos os plugins, e faça o bootstrap de um repo:</p>
+    <pre><code>/plugin marketplace add fcms14/agents-foundation
+/plugin install delivery-team@agents-foundation
+/plugin install stack-turbo-nest-react@agents-foundation   # camada de stack opcional
+/delivery-team:init                                         # scaffold de work/, docs/, regras, portões
+
+/delivery-team:task-new &lt;objetivo&gt;   # especifique → /delivery-team:task-start → revisão → apply-verdict</code></pre>
+    <p>O bootstrapper monta o kanban e uma árvore <code>docs/</code> semeada com ADR, materializa as regras, e conecta os portões de commit ao mecanismo de hook que o repositório usar.</p>
+
+    <hr class="section" />
+    <h2 id="referencias">Referências e leitura adicional</h2>
+    <ol class="refs">
+      <li>Patton, J. et al. <a href="https://martinfowler.com/articles/structured-prompt-driven/"><em>Structured Prompt-Driven Development</em></a>. martinfowler.com.</li>
+      <li>Nygard, M. <em>Documenting Architecture Decisions</em> — a prática de ADR que a fundação semeia em cada repositório.</li>
+      <li>Brown, S. <em>The C4 model for visualising software architecture</em> — o modelo de documentação usado pela camada de stack.</li>
+      <li>Anthropic. <a href="https://code.claude.com/docs">Documentação do Claude Code</a> — plugins, marketplaces, hooks e subagents.</li>
+      <li><a href="https://github.com/fcms14/agents-foundation">agents-foundation</a> — o código, os plugins e as notas de design completas.</li>
+    </ol>
+
+    <footer>
+      <p><span class="tag">v0.1.4</span> Construído como um v0 para validar a mecânica de um processo de entrega por agentes com imposição por construção. Correções e discordâncias são bem-vindas no <a href="https://github.com/fcms14/agents-foundation">repositório</a>.</p>
+    </footer>
+  </article>
+</div>
+
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 
-  const root = document.documentElement;
-  const btn  = document.getElementById('themeToggle');
-  const el   = document.querySelector('.mermaid');
-  const graphDef = el ? el.textContent.trim() : '';
+  const root     = document.documentElement;
+  const themeBtn = document.getElementById('themeToggle');
+  const langBtn  = document.getElementById('langToggle');
+  let theme = root.getAttribute('data-theme') || 'light';
+  let lang  = root.getAttribute('data-lang')  || 'en';
 
-  function renderDiagram(theme){
+  /* render the Mermaid diagram inside the currently visible language column,
+     in the current theme. The original graph source is cached per diagram so
+     it survives re-renders (Mermaid replaces the element's innerHTML). */
+  function renderDiagram(){
+    const el = document.querySelector('.wrap[data-l="' + lang + '"] .mermaid');
     if(!el) return;
+    let def = el.getAttribute('data-graph');
+    if(def === null){ def = el.textContent.trim(); el.setAttribute('data-graph', def); }
     el.removeAttribute('data-processed');
-    el.innerHTML = graphDef;
+    el.innerHTML = def;
     mermaid.initialize({ startOnLoad:false, theme: theme === 'dark' ? 'dark' : 'neutral', flowchart:{ curve:'basis' } });
     mermaid.run({ nodes:[el] });
   }
 
-  function applyTheme(theme){
-    root.setAttribute('data-theme', theme);
-    try{ localStorage.setItem('theme', theme); }catch(e){}
-    btn.textContent = theme === 'dark' ? '☀' : '☾';
-    btn.setAttribute('aria-pressed', theme === 'dark');
-    renderDiagram(theme);
+  function applyTheme(t){
+    theme = t;
+    root.setAttribute('data-theme', t);
+    try{ localStorage.setItem('theme', t); }catch(e){}
+    themeBtn.textContent = t === 'dark' ? '☀' : '☾';
+    themeBtn.setAttribute('aria-pressed', t === 'dark');
+    renderDiagram();
   }
 
-  applyTheme(root.getAttribute('data-theme') || 'light');
-  btn.addEventListener('click', () =>
-    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+  function applyLang(l){
+    lang = l;
+    root.setAttribute('data-lang', l);
+    root.lang = l;
+    try{ localStorage.setItem('lang', l); }catch(e){}
+    langBtn.textContent = l === 'en' ? 'PT' : 'EN';
+    langBtn.setAttribute('aria-label', l === 'en' ? 'Mudar para português' : 'Switch to English');
+    renderDiagram();
+  }
+
+  applyLang(lang);   // also performs the initial diagram render for the active language
+  applyTheme(theme);
+  themeBtn.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark'));
+  langBtn .addEventListener('click', () => applyLang(lang === 'en' ? 'pt' : 'en'));
 </script>
 </body>
 </html>
