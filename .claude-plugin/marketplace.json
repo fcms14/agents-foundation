@@ -6,7 +6,7 @@
     {
       "name": "delivery-team",
       "source": "./plugins/delivery-team",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "description": "Agnostic delivery process: role agents (planner/reviewer/docs/qa/delivery-manager), the work/ markdown kanban, deterministic board/docs/verdict gates, /init scaffolder, and the engineering principles.",
       "category": "workflow",
       "tags": ["agents", "kanban", "workflow", "review-gate", "process"]
@@ -14,7 +14,7 @@
     {
       "name": "stack-turbo-nest-react",
       "source": "./plugins/stack-turbo-nest-react",
-      "version": "0.1.3",
+      "version": "0.1.4",
       "description": "Opinionated stack layer (v0, as-built): NestJS + React/Turborepo implementer agents and their architecture/backend/frontend/delivery rules. Depends on delivery-team.",
       "category": "stack",
       "tags": ["nestjs", "react", "turborepo", "conventions"]

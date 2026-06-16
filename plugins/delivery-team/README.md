@@ -45,4 +45,6 @@ This layer carries no stack assumptions:
 - The **reviewer** is **rule-driven** — it checks against whatever `.claude/rules/*` are present, so stack opinions (throttler, cursor pagination, tokens/i18n, …) live in the stack plugin's rules, not hard-coded here.
 - The **commit gates** it ships are agnostic: `validate-board.mjs` checks only the board invariant (verdict + ticked Acceptance Criteria). Stack-specific gates — e.g. the migration↔ERD docs gate (`validate-docs.mjs`) — ship in the stack plugin, and `/delivery-team:init` wires whichever gates the installed plugins provide.
 
-Installing this layer alone produces a fully working, framework-neutral delivery process. (One known leftover: the `docs.md` rule still describes a C4/services-monorepo doc layout — it will be split so only the universal doc discipline stays here.)
+- The **docs** agent and `docs.md` rule carry only universal doc discipline (JSDoc, living docs, proximity, Mermaid authoring); the concrete documentation *model* (e.g. a C4 map over services/packages, ERDs) is a stack rule the docs agent reads.
+
+Installing this layer alone produces a fully working, framework-neutral delivery process.

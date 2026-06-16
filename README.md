@@ -117,8 +117,13 @@ A marketplace is just a git repo — no registry.
 
 ## Roadmap / known caveats
 
-- **Last doc-layer leak** — the reviewer is rule-driven and the migration↔ERD gate (`validate-docs.mjs`) now lives in the stack plugin. What remains is the `docs.md` *rule* text, which still describes a C4/services-monorepo layout; split it so only universal doc discipline stays in `delivery-team`.
-- **Opinionated stack is v0 as-built** — codify the de-facto design pattern (folder shape, naming, import boundaries) into explicit conventions, and add a structure-lint (ESLint boundaries / dependency-cruiser) so organization is a deterministic gate, not a reviewer judgment call.
-- **Hard plugin dependency** — `stack-turbo-nest-react` depends on `delivery-team` only in prose; confirm whether a real dependency field can enforce it.
-- **`/delivery-team:init` portability** — the commit-gate wiring assumes pnpm/husky (with a plain `.git/hooks/pre-commit` fallback); the `.mjs` validators require Node. Harden and document the prerequisites.
-- **End-to-end validation** — exercise the full loop (`marketplace add` → install → `/delivery-team:init` → `/delivery-team:task-new … → board-gate`) in a throwaway repo to confirm hooks fire and gates actually block.
+**Open:**
+
+- **Opinionated stack design conventions + structure-lint** — codify the de-facto design pattern (folder shape, naming, import boundaries) into explicit conventions, and add a structure-lint (ESLint boundaries / dependency-cruiser) so organization is a deterministic gate, not a reviewer judgment call. *Deliberately deferred* — to be shaped against real preferences, fed by the planner's abstraction-first design pass.
+- **End-to-end validation** — exercise the full loop (`marketplace add` → install → `/delivery-team:init` → `/delivery-team:task-new … → board-gate`) in a throwaway repo to confirm hooks fire and gates actually block. (All deterministic engines + hooks are script-tested; this confirms the live agent/command path.)
+
+**Resolved (recent versions):**
+
+- ✅ **Stack-agnostic process layer** — the reviewer and the docs agent/rule are rule-driven; stack opinions (security/resilience, the C4 docs model, the migration↔ERD gate) all live in the `stack-*` layer. `delivery-team`'s gates, board logic, and judgment carry no framework specifics; where an agent or command still names the C4 model or the reference stack, it's an explicit *example* that defers to the applicable rules. *(0.1.2–0.1.4)*
+- ✅ **Real plugin dependency** — `stack-turbo-nest-react` declares `"dependencies": ["delivery-team"]`. *(0.1.4)*
+- ✅ **`/delivery-team:init` portability** — explicit Node prerequisite, husky-or-plain-`.git/hooks` selection by repo type. *(0.1.4)*

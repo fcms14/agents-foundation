@@ -15,10 +15,14 @@ The plugin's own files live at **`${CLAUDE_PLUGIN_ROOT}`** (the install dir). Cl
 3. **Materialize the rules** so the agents' `.claude/rules/*` references resolve. Copy `${CLAUDE_PLUGIN_ROOT}/rules/*.md` into the repo's `.claude/rules/`. If a stack plugin is installed (e.g. `stack-turbo-nest-react`), copy its `rules/*.md` too. (Trade-off: these are **copies versioned with the project**, so a plugin upgrade does not auto-update them — re-run `/delivery-team:init --refresh-rules` to re-copy after upgrading. This is deliberate: a project pins the conventions it was built against.)
 
 4. **Wire the commit-time gates (git-level, non-bypassable).** The agent-time gates (`gate-done`, `format`, `guard-bash`) already come from the plugin's `hooks.json` automatically — no action needed. For the **commit-time** gates, set up a git hook:
-   - Ensure husky is present (`pnpm dlx husky init` or the repo's equivalent; if the project doesn't use husky, write a plain `.git/hooks/pre-commit` instead).
+   - **Prerequisite:** the validators are Node ESM (`.mjs`), so the git hook needs **`node` on `PATH`**. Check `command -v node`; if it's missing, still copy the scripts and wire the hook, but tell the user the gate won't fire until Node is installed (don't fail the bootstrap over it).
+   - **Pick the hook mechanism by what the repo uses:**
+     - If the repo already uses **husky** (a `.husky/` dir exists) — append to `.husky/pre-commit`.
+     - Else if it's a **Node project** (`package.json` present) and you can, initialize husky (`pnpm dlx husky init` / `npx husky init`) and use `.husky/pre-commit`.
+     - **Otherwise (any non-Node repo — Python, Go, Rust, …): write a plain `.git/hooks/pre-commit`** — a `#!/usr/bin/env bash` script that runs the validator lines below; `chmod +x` it. This path needs no Node toolchain beyond `node` itself, so the foundation works in any git repo.
    - Copy the **agnostic board gate** `${CLAUDE_PLUGIN_ROOT}/scripts/validate-board.mjs` into the repo's `.claude/scripts/` (the git hook runs outside Claude Code, so it cannot use `${CLAUDE_PLUGIN_ROOT}` — it needs local copies).
    - **If a stack plugin ships commit-gate scripts, copy those too.** Stack-specific gates live in the stack plugin (e.g. `stack-turbo-nest-react`'s `scripts/validate-docs.mjs`, the migration↔ERD gate). Locate the installed stack plugin in the Claude Code plugin cache (`~/.claude/plugins/`) and copy each `scripts/*.mjs` it provides into `.claude/scripts/`.
-   - Append to `.husky/pre-commit` (after any existing lint-staged line) **one line per validator you copied** — always the board gate, plus any stack gate:
+   - Append to the chosen hook (after any existing lint-staged line) **one line per validator you copied** — always the board gate, plus any stack gate:
      ```
      node .claude/scripts/validate-board.mjs --staged
      node .claude/scripts/validate-docs.mjs --staged   # only if the stack docs-gate was copied

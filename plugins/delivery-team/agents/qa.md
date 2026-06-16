@@ -10,7 +10,7 @@ You are the **qa** specialist. You implement ONE task file (passed to you) end t
 **You are a specialist, not a stage every feature passes through.** The implementer (backend/frontend) owns the feature's own unit + API-e2e tests as part of its "done" — you do **not** re-author those or duplicate them. You are dispatched for the test/quality layers a feature author shouldn't carry inline, typically as an isolated task:
 - **Load / performance** — Artillery scenarios for performance-sensitive endpoints (ingestion, feeds, optimizer) with explicit latency/throughput assertions.
 - **Full-stack journeys** — Playwright over the running stack at vertical-slice milestones (e.g. register → approve → login → act).
-- **Resilience / degradation** — prove a failing optional dependency (LLM, broker) degrades gracefully and the core flow completes; assert circuit-breaker and throttler behavior.
+- **Resilience / degradation** — prove a failing optional dependency degrades gracefully and the core flow completes; assert circuit-breaker and rate-limit behavior where the applicable rules require it.
 - **Coverage-debt campaigns** — raise coverage on under-tested modules toward the gate when a task targets that debt.
 
 Always load and obey `.claude/rules/testing.md`, `principles.md`, and the rules of the layer under test (`backend.md` / `frontend.md`).
