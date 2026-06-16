@@ -10,6 +10,7 @@ Depends on **delivery-team** (the process layer). Install both.
 | --- | --- | --- |
 | **Agents** | `agents/` — backend, frontend, infra | the implementers. They obey the stack rules below + the agnostic rules from delivery-team. |
 | **Rules** | `rules/` — architecture, backend, frontend, delivery | the stack conventions (NestJS, React/design-system, Turborepo, Railway/CI). |
+| **Scripts** | `scripts/` — `validate-docs.mjs` | the **stack-specific commit gate**: refuses a commit that stages a migration under `services/<svc>/…` without updating that service's ERD/README. `/delivery-team:init` copies it into the consumer's `.claude/scripts/` and wires it into the pre-commit alongside the agnostic board gate. |
 
 ## Status & roadmap (deferred decisions)
 

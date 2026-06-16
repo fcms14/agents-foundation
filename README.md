@@ -87,6 +87,25 @@ Then drive the workflow: `/delivery-team:task-new <goal> → /delivery-team:task
 - **Updates**: each `plugin.json` pins a `version` — consumers update with `/plugin marketplace update agents-foundation`.
 - **Coexistence**: a project's own `.claude/` and installed plugins merge; on a name clash the project-local copy wins — so a consumer can run a pinned published version while the foundation keeps evolving.
 
+## How it compares (vs. prompt-canvas methods like SPDD)
+
+Prompt-canvas methods — notably [SPDD (Structured Prompt-Driven Development)](https://martinfowler.com/articles/structured-prompt-driven/) — share our core conviction: make intent explicit and versioned *before* code, and keep humans in control through judgment, not typing. We agree with that, and we adopted their best idea (see the last row). Where this foundation goes further:
+
+| | **agents-foundation** | Prompt-canvas (e.g. SPDD) |
+| --- | --- | --- |
+| **Enforcement** | **Deterministic & non-bypassable** — hooks + scripts refuse `done/` without a recorded verdict and every Acceptance Criterion ticked | Process discipline + manual review; nothing mechanically blocks a skipped step |
+| **State tracking** | Explicit git-native kanban (folder = state), dependency graph, auto-replenish (`task-promote`) | Tracked implicitly through commits |
+| **Team / scale** | Multi-agent orchestration: parallel implementers in isolated worktrees, model tiering (Sonnet workers / Opus reviewer) | One developer + AI, sequential steps |
+| **Standards** | Strong **rules applied to every task** — impossible to forget; the reviewer interprets them | Declared **per feature** in the canvas — relies on the author remembering each time |
+| **Reusability** | A reusable, installable marketplace: agnostic process layer + swappable `stack-*` layers | A single methodology + its CLI |
+| **Judgment vs. bookkeeping** | Split by construction: agents judge, deterministic scripts apply state, hooks enforce | Review and application are largely manual |
+
+The sharpest difference is the **standards** row. A canvas trusts the author to restate the security/perf/structure constraints on every feature; people forget, and the gap ships silently. We keep those as **strong rules enforced for all tasks**, so a constraint can't be left out of one task by accident.
+
+What we took *from* the canvas: **abstraction-first** (model the domain and module boundaries before writing code). We adopted it the house way — as a rule the planner applies to every task and the reviewer checks — rather than a section an author can forget to fill.
+
+> TL;DR — if you want a *method a disciplined developer follows*, a prompt canvas is fine. If you want a *system that won't let the process be skipped*, and that scales to a team of agents, use this.
+
 ## Contributing
 
 A marketplace is just a git repo — no registry.
@@ -98,7 +117,7 @@ A marketplace is just a git repo — no registry.
 
 ## Roadmap / known caveats
 
-- **One residual stack coupling** — the reviewer is now rule-driven (stack opinions live in the stack plugin's rules), but `validate-docs.mjs` still assumes a `services/<svc>/.../migrations` monorepo layout (fail-open elsewhere). Move it into the stack layer. (Detailed in the delivery-team README.)
+- **Last doc-layer leak** — the reviewer is rule-driven and the migration↔ERD gate (`validate-docs.mjs`) now lives in the stack plugin. What remains is the `docs.md` *rule* text, which still describes a C4/services-monorepo layout; split it so only universal doc discipline stays in `delivery-team`.
 - **Opinionated stack is v0 as-built** — codify the de-facto design pattern (folder shape, naming, import boundaries) into explicit conventions, and add a structure-lint (ESLint boundaries / dependency-cruiser) so organization is a deterministic gate, not a reviewer judgment call.
 - **Hard plugin dependency** — `stack-turbo-nest-react` depends on `delivery-team` only in prose; confirm whether a real dependency field can enforce it.
 - **`/delivery-team:init` portability** — the commit-gate wiring assumes pnpm/husky (with a plain `.git/hooks/pre-commit` fallback); the `.mjs` validators require Node. Harden and document the prerequisites.

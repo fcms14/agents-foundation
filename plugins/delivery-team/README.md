@@ -9,7 +9,7 @@ The "company in a box": a team of role agents, the `work/` markdown kanban they 
 | **Agents** | `agents/` — planner, reviewer, docs, qa, product-delivery-manager | the process roles. The implementer agents (backend/frontend/infra) live in the **stack** plugin. |
 | **Commands** | `commands/` — `init`, `task-new`, `task-start`, `task-ship`, `task-promote`, `apply-verdict`, `docs-sync` | the workflow skills. |
 | **Hooks** | `hooks/hooks.json` + `hooks/*.sh` | agent-time PreToolUse gates (`gate-done`, `guard-bash`) + PostToolUse `format`, wired via `${CLAUDE_PLUGIN_ROOT}`. |
-| **Scripts** | `scripts/` — `validate-board.mjs`, `validate-docs.mjs`, `apply-verdict.mjs` | the deterministic engines behind the gates and verdict application. |
+| **Scripts** | `scripts/` — `validate-board.mjs`, `apply-verdict.mjs` | the deterministic engines behind the board gate and verdict application (both stack-agnostic). Stack-specific gates ship in the stack plugin. |
 | **Rules** | `rules/` — principles, workflow, adr, docs, testing, observability | the agnostic conventions the agents obey. |
 | **Templates** | `templates/TASK-TEMPLATE.md` + `templates/docs/` | the standardized task shape (Spec/AC checklist/Verdict/Log) and the `docs/adr/` scaffold (ADR template, bootstrap record, index) that `/delivery-team:init` lays down. |
 
@@ -38,10 +38,11 @@ That's why the **reviewer** spans three forms: an *agent* judges, a *skill* (`ap
 
 `rules/` and `scripts/` are not native plugin component types — they ride along as files. The agents reference `.claude/rules/*` and the commit-gate runs `.claude/scripts/*`; **`/delivery-team:init` materializes both into the consumer repo** (see `commands/init.md` for the exact mechanism and the update trade-off).
 
-## v0 caveat — one residual stack coupling
+## Stack-agnostic by construction
 
-The **reviewer** is now **rule-driven**: it checks against whatever `.claude/rules/*` are present, so stack opinions (throttler, cursor pagination, tokens/i18n, …) live in the stack plugin's rules — not hard-coded here. Installing this layer alone produces no stack-specific noise.
+This layer carries no stack assumptions:
 
-One coupling remains (tracked for removal):
+- The **reviewer** is **rule-driven** — it checks against whatever `.claude/rules/*` are present, so stack opinions (throttler, cursor pagination, tokens/i18n, …) live in the stack plugin's rules, not hard-coded here.
+- The **commit gates** it ships are agnostic: `validate-board.mjs` checks only the board invariant (verdict + ticked Acceptance Criteria). Stack-specific gates — e.g. the migration↔ERD docs gate (`validate-docs.mjs`) — ship in the stack plugin, and `/delivery-team:init` wires whichever gates the installed plugins provide.
 
-- The **docs gate** (`scripts/validate-docs.mjs`) hard-codes a `services/<svc>/.../migrations/*.sql` + service-README layout, i.e. a NestJS/Turborepo-style monorepo. On a different repo shape it simply never triggers (fail-open), so it's harmless but inert — it will move into the `stack-*` layer.
+Installing this layer alone produces a fully working, framework-neutral delivery process. (One known leftover: the `docs.md` rule still describes a C4/services-monorepo doc layout — it will be split so only the universal doc discipline stays here.)
