@@ -8,10 +8,10 @@ One diagram level per scope, so every README answers exactly one question and th
 
 | Level | Location | Diagram | Answers |
 | --- | --- | --- | --- |
-| **C4 L1 — System Context** | **monorepo root `README.md`** | the whole system as one box + the people (operator, driver, m2m client) and external systems (LLM, broker, maps), **plus a container/service map showing how the services/apps/DBs/broker communicate and depend on each other** | "what is this system, who uses it, and how do its services talk?" |
+| **C4 L1 — System Context** | **monorepo root `README.md`** | the whole system as one box + the people who use it (your user roles) and external systems it talks to (e.g. an LLM, a broker, a third-party API), **plus a container/service map showing how the services/apps/DBs/broker communicate and depend on each other** | "what is this system, who uses it, and how do its services talk?" |
 | **C4 L2 — Container** | **each service root `services/<svc>/README.md`** | this service as a container: its external dependencies (its DB, broker, queues, other services it calls or is called by) and the **modules it contains** as a high-level block map | "what is this service, what does it depend on, and what are its parts?" |
 | **C4 L3 — Component** | **each feature module `services/<svc>/src/<module>/README.md`** | the components inside the module (controller / service / repository / processor / gateway / guards …) and their relationships and ports | "how is this module built internally?" |
-| **ERD** | **the service's db README `services/<svc>/src/db/README.md`** | an entity-relationship diagram of that service's tables/relations (Mermaid `erDiagram`) + schema notes (PostGIS/Timescale specifics, migration list) | "what is the data model?" |
+| **ERD** | **the service's db README `services/<svc>/src/db/README.md`** | an entity-relationship diagram of that service's tables/relations (Mermaid `erDiagram`) + schema notes (any extension specifics — e.g. PostGIS/Timescale — and the migration list) | "what is the data model?" |
 
 **Rules:**
 - The diagram a README carries is the **C4 level for its scope** (root→L1, service→L2, module→L3). Do not put a lower level's detail in a higher level's README.

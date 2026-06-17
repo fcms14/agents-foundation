@@ -1,6 +1,6 @@
 {
   "name": "delivery-team",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Agnostic delivery process: role agents, the work/ kanban workflow, deterministic review/board/docs gates, the /init scaffolder, and the engineering principles. Stack-agnostic — pair with an opinionated stack plugin.",
   "author": { "name": "Felipe Cardoso" },
   "keywords": ["agents", "kanban", "workflow", "review-gate", "delivery"],

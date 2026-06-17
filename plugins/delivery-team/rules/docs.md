@@ -27,4 +27,4 @@ Diagrams must actually render. These rules prevent the common parser failures:
 - **Alias subgraph titles that contain special characters**: `subgraph SA["services/auth"]`, not `subgraph services/auth`.
 - **Never name a sequence-diagram participant after a keyword** — `opt`, `alt`, `else`, `end`, `loop`, `par`, `and`, `note`, `activate`, `rect`, `critical`, `break` (case-insensitive). A participant `OPT` collides with the `opt` fragment and breaks parsing; use `OPTSVC`/`OS` instead.
 - **No `;` inside labels or messages** — it is a statement separator; use `,` or `—`.
-- **`erDiagram` relations** use crow's-foot syntax (`ORDERS ||--o{ ROUTE_STOPS : has`) and quoted attribute types only when they contain special characters — keep entity names UPPER_SNAKE matching the table name.
+- **`erDiagram` relations** use crow's-foot syntax (`ORDERS ||--o{ ORDER_ITEMS : has`) and quoted attribute types only when they contain special characters — keep entity names UPPER_SNAKE matching the table name.

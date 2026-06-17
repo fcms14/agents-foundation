@@ -20,7 +20,7 @@
 - Backend and frontend deploy to **Railway**.
 - Provide a **`railway.toml`**, a **`Dockerfile`** per deployable, and a **`Caddyfile`** for the frontend (static serving / reverse proxy), all Railway-compatible.
 - Docker images must be the same ones used locally where practical — parity between local and deploy.
-- MQTT/broker and DB provisioned as Railway services or compatible managed equivalents.
+- The message broker (when used — e.g. MQTT/Redis) and DB are provisioned as Railway services or compatible managed equivalents.
 
 ## Database migrations in the pipeline (least privilege)
 

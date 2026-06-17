@@ -1,6 +1,6 @@
 ---
 name: infra
-description: Owns Docker, docker-compose, sidecars, the broker (MQTT), CI workflows, and Railway deploy assets (railway.toml, Dockerfiles, Caddyfile, env). Use for anything that makes the stack run locally or deploy. Executes a single task file from work/active/.
+description: Owns Docker, docker-compose, sidecars, the message broker, CI workflows, and Railway deploy assets (railway.toml, Dockerfiles, Caddyfile, env). Use for anything that makes the stack run locally or deploy. Executes a single task file from work/active/.
 tools: Read, Grep, Glob, Write, Edit, Bash
 model: sonnet
 ---
@@ -13,7 +13,7 @@ Always load and obey `.claude/rules/delivery.md`, `architecture.md`, `observabil
 
 Non-negotiables:
 - **One-command local stack**: the whole system comes up with `docker compose up` — every app, DB, and broker included. Verify it actually boots.
-- **MQTT** broker runs in Docker locally and is Railway-compatible; **WebSocket** path works locally.
+- The **message broker** (e.g. MQTT for device telemetry, or Redis for jobs) runs in Docker locally and is Railway-compatible; the **WebSocket** path works locally.
 - **Sidecar**: implement the operational sidecar (log shipping / metrics / heartbeat) as a separate container that is off the critical path.
 - **Deploy**: provide/maintain `railway.toml`, a `Dockerfile` per deployable, and a `Caddyfile` for the frontend, all Railway-compatible. Keep local↔deploy image parity where practical.
 - **DB least privilege**: provision **two DB roles** — a limited CRUD-only role the app uses (`DATABASE_URL`) and a DDL-capable migration role the pipeline uses (`MIGRATION_DATABASE_URL`), neither a cluster superuser. The migration role owns the schema and grants the app role its table privileges. Wire the migration step to run before the app serves traffic. See `delivery.md` / `principles.md`.

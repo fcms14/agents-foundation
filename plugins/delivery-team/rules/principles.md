@@ -24,7 +24,7 @@ These are non-negotiable defaults. When a rule here conflicts with a quick hack,
 ## Repository conventions
 
 - **Language: English.** Everything committed is English — code, identifiers, docs, specs, README, `.claude/`, comments, commit messages, `/work` task files. Conversation with the user may be in another language; the artifact is always English.
-- **Commits: Conventional Commits, single line, no AI signature.** Prefix with a type (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `ci:`, `build:`, `perf:`), with an optional scope (`feat(order-routing): …`). One concise imperative line. No `Co-Authored-By` / "Generated with Claude" trailers.
+- **Commits: Conventional Commits, single line, no AI signature.** Prefix with a type (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `ci:`, `build:`, `perf:`), with an optional scope (`feat(api): …`). One concise imperative line. No `Co-Authored-By` / "Generated with Claude" trailers.
 - **Comments: minimal.** See `docs.md` — JSDoc above classes/modules/methods only; avoid comments inside method bodies (they usually signal a function that should be split).
 
 ## Decision heuristic

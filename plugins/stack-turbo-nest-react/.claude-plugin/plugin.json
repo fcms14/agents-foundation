@@ -1,7 +1,7 @@
 {
   "name": "stack-turbo-nest-react",
-  "version": "0.1.4",
-  "description": "Opinionated stack layer (v0, as-built from poc-delivery-watch-tower): NestJS + React/Turborepo implementer agents and their architecture/backend/frontend/delivery/docs rules. Depends on delivery-team. To be refined into your design conventions + a structure-lint.",
+  "version": "0.1.5",
+  "description": "Opinionated stack layer (v0, as-built — captured from a real product): NestJS + React/Turborepo implementer agents and their architecture/backend/frontend/delivery/docs rules. Domain names are illustrative examples. Depends on delivery-team. To be refined into your design conventions + a structure-lint.",
   "author": { "name": "Felipe Cardoso" },
   "keywords": ["nestjs", "react", "turborepo", "drizzle", "conventions"],
   "dependencies": ["delivery-team"]
