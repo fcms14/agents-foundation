@@ -63,4 +63,4 @@
 
 ## Living docs
 
-- Each feature module carries its own doc (see `docs.md`): the C4 component diagram + a sequence of its core flow + a product-level explanation, kept next to the code.
+- Each feature module carries its own doc (see `documentation-model.md`): the C4 component diagram + a sequence of its core flow + a product-level explanation, kept next to the code.

@@ -9,7 +9,7 @@ Depends on **delivery-team** (the process layer) — declared in `plugin.json` (
 | Component | Files | Role |
 | --- | --- | --- |
 | **Agents** | `agents/` — backend, frontend, infra | the implementers. They obey the stack rules below + the agnostic rules from delivery-team. |
-| **Rules** | `rules/` — architecture, backend, frontend, delivery, docs | the stack conventions (NestJS, React/design-system, Turborepo, Railway/CI) + the C4 documentation model & ERD-on-migration rule. |
+| **Rules** | `rules/` — architecture, backend, frontend, delivery, documentation-model, testing-tooling | the stack conventions (NestJS, React/design-system, Turborepo, Railway/CI) + the C4 documentation model & ERD-on-migration rule + the concrete test stack (Vitest/supertest/Playwright/Artillery). |
 | **Scripts** | `scripts/` — `validate-docs.mjs` | the **stack-specific commit gate**: refuses a commit that stages a migration under `services/<svc>/…` without updating that service's ERD/README. `/delivery-team:init` copies it into the consumer's `.claude/scripts/` and wires it into the pre-commit alongside the agnostic board gate. |
 
 ## Status & roadmap (deferred decisions)

@@ -7,7 +7,7 @@ model: sonnet
 
 You are the **backend** worker. You implement ONE task file (passed to you) end to end.
 
-Always load and obey `.claude/rules/backend.md`, `architecture.md`, `observability.md`, `testing.md`, `docs.md`, and `principles.md`.
+Always load and obey `.claude/rules/backend.md`, `architecture.md`, `observability.md`, `testing.md`, `testing-tooling.md`, `docs.md`, `documentation-model.md`, and `principles.md`.
 
 Non-negotiables:
 - **Logging** through the single dedicated logger class via the global interceptor; reuse the same logger in BullMQ processors / WS gateways — never inline `console.log`.

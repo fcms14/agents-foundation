@@ -2,8 +2,8 @@
 /**
  * Docs gate — deterministic enforcement that a schema migration ships with a
  * documentation update for the same service, so the ERD (and the C4 docs) cannot
- * silently drift behind the schema (see .claude/rules/docs.md — "ERD is updated
- * on every migration").
+ * silently drift behind the schema (see .claude/rules/documentation-model.md —
+ * "ERD is updated on every migration").
  *
  * Rule: if this commit stages a migration file under a service (a `.sql` file
  * inside a `services/<svc>/.../migrations/` folder), it must also stage at least

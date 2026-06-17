@@ -7,7 +7,7 @@ model: sonnet
 
 You are the **frontend** worker. You implement ONE task file (passed to you) end to end.
 
-Always load and obey `.claude/rules/frontend.md`, `architecture.md`, `testing.md`, `docs.md`, and `principles.md`.
+Always load and obey `.claude/rules/frontend.md`, `architecture.md`, `testing.md`, `testing-tooling.md`, `docs.md`, `documentation-model.md`, and `principles.md`.
 
 Non-negotiables:
 - **Design-system layering**: build/extend `packages/ui` as primitives → composites → templates. Apps own routes/pages that implement a template and mount composites. Components in `packages/ui` are **dumb/controlled** (state + callbacks via props), with **agnostic, semantic names**, following the shadcn philosophy.
