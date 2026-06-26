@@ -152,8 +152,12 @@ try {
     const cells = rm[i].split('|');
     if (cells.length < 3) continue;
     // Match the row by scanning every cell for the task id — the id column is not
-    // assumed to be first (the canonical board is `# | Task | agent | … | state`).
-    const matches = cells.some((c) => c.trim() === id || c.trim() === `TASK-${num}`);
+    // assumed to be first. The canonical board is `# | Task | agent | … | state`
+    // where `#` holds the bare number (e.g. `027`), so match the bare num too.
+    const matches = cells.some((c) => {
+      const t = c.trim();
+      return t === id || t === `TASK-${num}` || t === num;
+    });
     if (matches) {
       let last = cells.length - 1;
       while (last > 0 && cells[last].trim() === '') last--;
