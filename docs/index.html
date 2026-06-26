@@ -129,7 +129,7 @@
 </head>
 <body>
 <div class="ctrls">
-  <button id="langToggle" class="ctrl" type="button" aria-label="Switch language">PT</button>
+  <button id="langToggle" class="ctrl" type="button" aria-label="Switch language">EN</button>
   <button id="themeToggle" class="ctrl" type="button" aria-label="Toggle dark and light theme" title="Toggle theme">☾</button>
 </div>
 
@@ -502,7 +502,7 @@ flowchart TD
     root.setAttribute('data-lang', l);
     root.lang = l;
     try{ localStorage.setItem('lang', l); }catch(e){}
-    langBtn.textContent = l === 'en' ? 'PT' : 'EN';
+    langBtn.textContent = l === 'en' ? 'EN' : 'PT';
     langBtn.setAttribute('aria-label', l === 'en' ? 'Mudar para português' : 'Switch to English');
     renderDiagram();
   }
